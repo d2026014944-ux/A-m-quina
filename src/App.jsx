@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 const N_DICE = 10;
 const DICE_SUM_MEAN = 35;
-const DICE_STD = Math.sqrt((10 * 35) / 12);
+const DICE_SUM_STD = Math.sqrt((10 * 35) / 12);
 
 const TOTAL_TRIALS = 3000;
 const SLOW_LIMIT = 12;
@@ -11,6 +11,7 @@ const MIN_LOG_TRIAL = 0.7;
 const Y_MIN_CLAMP = -0.08;
 const Y_MAX_CLAMP = 1.08;
 const MAX_GRAPH_DOTS = 18;
+const FAST_MODE_BATCH_SIZE = 20;
 
 const DOTS = {
   1: [[50, 50]],
@@ -207,11 +208,12 @@ export default function App() {
     const s = sim.current;
     const vals = Array.from({ length: N_DICE }, () => Math.floor(Math.random() * 6) + 1);
     const sum = vals.reduce((a, b) => a + b, 0);
-    const X = (sum - DICE_SUM_MEAN) / DICE_STD;
+    const X = (sum - DICE_SUM_MEAN) / DICE_SUM_STD;
     const absX = Math.abs(X);
     s.trial++;
     s.sumAbsX += absX;
-    const piEst = 2 / Math.pow(s.sumAbsX / s.trial, 2);
+    const meanAbsX = s.sumAbsX / s.trial;
+    const piEst = 2 / (meanAbsX * meanAbsX);
     if (s.trial <= 120 || s.trial % 4 === 0 || s.trial === TOTAL_TRIALS) {
       s.estimates.push({ trial: s.trial, piEst });
     }
@@ -272,7 +274,7 @@ export default function App() {
         }));
         later(step, 48);
       } else {
-        for (let i = 0; i < 20 && s.trial < TOTAL_TRIALS; i++) doTrial();
+        for (let i = 0; i < FAST_MODE_BATCH_SIZE && s.trial < TOTAL_TRIALS; i++) doTrial();
         const last = s.estimates[s.estimates.length - 1];
         setDisp((p) => ({
           ...p,
@@ -372,6 +374,9 @@ export default function App() {
         </div>
 
         <Graph estimates={estimates} fastMode={fastMode} trial={trial} />
+        <div aria-live="polite" style={{ position: "absolute", left: -9999, top: "auto", width: 1, height: 1, overflow: "hidden" }}>
+          {fastMode ? `Simulating fast mode, trial ${trial}` : `Trial ${trial}`}
+        </div>
 
         <button
           type="button"
