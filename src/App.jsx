@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 const N_DICE = 10;
-const DICE_MEAN = 35;
+const DICE_SUM_MEAN = 35;
 const DICE_STD = Math.sqrt((10 * 35) / 12);
 
 const TOTAL_TRIALS = 3000;
 const SLOW_LIMIT = 12;
 const MEDIUM_LIMIT = 180;
+const MIN_LOG_TRIAL = 0.7;
+const Y_MIN_CLAMP = -0.08;
+const Y_MAX_CLAMP = 1.08;
+const MAX_GRAPH_DOTS = 18;
 
 const DOTS = {
   1: [[50, 50]],
@@ -69,8 +73,8 @@ function Graph({ estimates, fastMode, trial }) {
   const ph = H - M.t - M.b;
   const LOG_MAX = Math.log10(TOTAL_TRIALS);
 
-  const gx = (t) => M.l + (Math.log10(Math.max(t, 0.7)) / LOG_MAX) * pw;
-  const gy = (v) => M.t + ph - Math.min(Math.max((v - 1) / 4, -0.08), 1.08) * ph;
+  const gx = (t) => M.l + (Math.log10(Math.max(t, MIN_LOG_TRIAL)) / LOG_MAX) * pw;
+  const gy = (v) => M.t + ph - Math.min(Math.max((v - 1) / 4, Y_MIN_CLAMP), Y_MAX_CLAMP) * ph;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -101,7 +105,7 @@ function Graph({ estimates, fastMode, trial }) {
       });
       ctx.stroke();
 
-      const dotCount = Math.min(estimates.length, 18);
+      const dotCount = Math.min(estimates.length, MAX_GRAPH_DOTS);
       for (let i = 0; i < dotCount; i++) {
         const { trial: t, piEst } = estimates[i];
         ctx.fillStyle = "#FFD700";
@@ -203,7 +207,7 @@ export default function App() {
     const s = sim.current;
     const vals = Array.from({ length: N_DICE }, () => Math.floor(Math.random() * 6) + 1);
     const sum = vals.reduce((a, b) => a + b, 0);
-    const X = (sum - DICE_MEAN) / DICE_STD;
+    const X = (sum - DICE_SUM_MEAN) / DICE_STD;
     const absX = Math.abs(X);
     s.trial++;
     s.sumAbsX += absX;
