@@ -49,7 +49,7 @@ const DOTS = {
 function Die({ value = 1, size = 56 }) {
   const pips = DOTS[value] || DOTS[1];
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100" aria-label={`die-${value}`}>
+    <svg width={size} height={size} viewBox="0 0 100 100" aria-label={`Die showing ${value}`}>
       <defs>
         <linearGradient id="dieGrad" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#1a4f9d" />
@@ -331,10 +331,18 @@ export default function App() {
       }}
     >
       <div style={{ width: 860, maxWidth: "100%" }}>
-        <h1 style={{ color: gold, fontSize: 30, fontWeight: 600, margin: "0 0 10px" }}>Estimating π with |X| where X ~ N(0,1)</h1>
+        <h1
+          aria-label="Estimating pi using absolute value of X where X follows a standard normal distribution"
+          style={{ color: gold, fontSize: 30, fontWeight: 600, margin: "0 0 10px" }}
+        >
+          Estimating π with |X| where X ~ N(0,1)
+        </h1>
         <div style={{ color: gold, fontSize: 23, lineHeight: 1.5, marginBottom: 16 }}>
           <div>
-            X ~ 𝒩(0,1) ⟹ E[|X|] = <span style={{ verticalAlign: "middle" }}>√</span>
+            X ~ 𝒩(0,1) ⟹ E[|X|] ={" "}
+            <span role="img" aria-label="square root" style={{ verticalAlign: "middle" }}>
+              √
+            </span>
             <Frac num="2" den="π" />
           </div>
           <div>
