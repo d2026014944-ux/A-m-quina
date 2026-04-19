@@ -359,7 +359,7 @@ export default function App() {
         </div>
 
         <div style={{ color: gold, fontSize: 22, marginBottom: 12, minHeight: 30 }}>
-          {sum == null ? (
+          {sum === null ? (
             "Sum → X → |X|"
           ) : (
             <>
@@ -369,7 +369,7 @@ export default function App() {
         </div>
 
         <div style={{ color: green, fontSize: 27, marginBottom: 6 }}>
-          Live Estimate: {piEst == null ? "—" : piEst.toFixed(4)}
+          Live Estimate: {piEst === null ? "—" : piEst.toFixed(4)}
           <span style={{ color: "#aaa", fontSize: 18 }}> (trial {trial})</span>
         </div>
 
