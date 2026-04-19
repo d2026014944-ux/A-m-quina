@@ -135,7 +135,7 @@ function Graph({ estimates, fastMode, trial }) {
             <text x={gx(t)} y={M.t + ph + 25} fill="#ddd" fontSize="15" textAnchor="middle">
               10
               <tspan dy="-7" fontSize="11">
-                {Math.log10(t)}
+                {Math.round(Math.log10(t))}
               </tspan>
             </text>
           </g>
@@ -342,7 +342,7 @@ export default function App() {
         <div style={{ color: gold, fontSize: 23, lineHeight: 1.5, marginBottom: 16 }}>
           <div>
             X ~ 𝒩(0,1) ⟹ E[|X|] ={" "}
-            <span role="img" aria-label="square root" style={{ verticalAlign: "middle" }}>
+            <span aria-label="square root" style={{ verticalAlign: "middle" }}>
               √
             </span>
             <Frac num="2" den="π" />
@@ -374,7 +374,10 @@ export default function App() {
         </div>
 
         <Graph estimates={estimates} fastMode={fastMode} trial={trial} />
-        <div aria-live="polite" style={{ position: "absolute", left: -9999, top: "auto", width: 1, height: 1, overflow: "hidden" }}>
+        <div
+          aria-live="polite"
+          style={{ position: "absolute", clip: "rect(0, 0, 0, 0)", width: 1, height: 1, margin: -1, overflow: "hidden", whiteSpace: "nowrap", border: 0 }}
+        >
           {fastMode ? `Simulating fast mode, trial ${trial}` : `Trial ${trial}`}
         </div>
 
